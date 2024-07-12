@@ -1,13 +1,79 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body,
+body input,
+body button {
+  font-family: "Source Code Pro", "monospace";
+  font-size: initial;
+  color: var(--foreground-color);
+  background-color: var(--background-color);
+}
+
+body input,
+body button {
+  appearance: none;
+  border-color: var(--foreground-color);
+  border-style: solid;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  max-width: 80em;
+}
+
+a {
+  color: var(--highlight-0);
+  font-weight: bolder;
+}
+
+a:visited {
+  color: var(--highlight-1);
+}
+
+:root {
+  --foreground-color: black;
+  --background-color: white;
+  --paragraph-margin: 1em;
+}
+
+p {
+  margin-block-start: var(--paragraph-margin);
+  margin-block-end: var(--paragraph-margin);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --highlight-0: hsl(200deg 100% 60%);
+    --highlight-1: hsl(200deg 50% 80%);
+    --foreground-color: white;
+    --background-color: black;
+  }
+
+}
+
+.search-bar {
+  height: 4em;
+  background: linear-gradient(to right, rgb(149, 3, 19) 0.47%, rgb(199, 5, 36));
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 4px;
+  min-width: 40em;
+}
+
+.margin {
+  margin: 1ex;
+}
+
+.search-bar input,
+.search-bar button {
+  border-color: var(--background-color);
 }
