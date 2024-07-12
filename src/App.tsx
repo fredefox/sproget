@@ -2,21 +2,11 @@ import React from "react";
 import * as Result from "./Result";
 import * as Router from "react-router-dom";
 
-const isHTMLLinkElement = (x: unknown): x is HTMLLinkElement =>
-  Boolean(x && typeof x === "object" && "href" in x);
-
 export const Main = (): React.ReactElement => {
-  const [inp, setInp] = React.useState<string>("");
-  const [query, setQuery] = React.useState<string>("");
-  Router.useBeforeUnload((event): void => {
-    if (!isHTMLLinkElement(document.activeElement)) return;
-    const { searchParams } = new URL(document.activeElement.href);
-    const newInp = searchParams.get("SearchableText");
-    if (newInp === null) return;
-    setInp(newInp);
-    setQuery(newInp);
-    event.preventDefault();
-  });
+  const q: string =
+    new URL(window.location.href).searchParams.get("SearchableText") || "";
+  const [inp, setInp] = React.useState<string>(q);
+  const [query, setQuery] = React.useState<string>(q);
   return (
     <>
       <form
