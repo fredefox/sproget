@@ -16,13 +16,14 @@ export const Main = (): React.ReactElement => {
           setQuery(inp);
         }}
       >
-        <div className="margin">
+        <div className="margin row-reverse">
           <input value={inp} onChange={(e) => setInp(e.target.value)} />
           <span className="margin" />
           <button type="submit">Søg</button>
         </div>
       </form>
-      <Result.Result query={query} />
+      {query && <Result.Result query={query} />}
+      {!query && <p>Please input query</p>}
     </div>
   );
 };

@@ -76,3 +76,8 @@ p {
 .search-bar button {
   border-color: var(--background-color);
 }
+
+.row-reverse {
+  display: flex;
+  flex-direction: row-reverse;
+}
