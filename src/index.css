@@ -18,6 +18,17 @@ body button {
   appearance: none;
   border-color: var(--foreground-color);
   border-style: solid;
+  border-width: 2px;
+  border-radius: 0px;
+  padding-block-end: 1px;
+  padding-block-start: 1px;
+  padding-inline-end: 6px;
+  padding-inline-start: 6px;
+  outline-style: solid;
+  outline-width: 1px;
+  outline-color: var(--background-color);
+  margin-inline-start: 1em;
+  margin-inline-end: 1em;
 }
 
 body {
@@ -55,13 +66,15 @@ p {
     --highlight-1: hsl(200deg 50% 80%);
     --foreground-color: white;
     --background-color: black;
+    --danebrog: #E31836;
+    --danebrog-orlog: #AC0234;
   }
 
 }
 
 .search-bar {
   height: 4em;
-  background: linear-gradient(to right, rgb(149, 3, 19) 0.47%, rgb(199, 5, 36));
+  background: linear-gradient(to right, var(--danebrog), var(--danebrog-orlog));
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -80,4 +93,8 @@ p {
 .row-reverse {
   display: flex;
   flex-direction: row-reverse;
+}
+
+:active, :focus-visible {
+  outline-color: var(--foreground);
 }

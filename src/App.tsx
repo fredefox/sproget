@@ -18,7 +18,6 @@ export const Main = (): React.ReactElement => {
       >
         <div className="margin row-reverse">
           <input value={inp} onChange={(e) => setInp(e.target.value)} />
-          <span className="margin" />
           <button type="submit">Søg</button>
         </div>
       </form>

@@ -37,7 +37,7 @@ table, tbody, tr, td {
   margin-bottom: 1ex;
 }
 
-.m, .phon, .def, .onyms {
+.phon, .def, .onyms {
   display: block;
 }
 
