@@ -7,7 +7,8 @@ export const store = (k: string, x: unknown) =>
 
 export const load = (k: string): unknown => {
   const s = localStorage.getItem(k);
-  return s && JSON.parse(s);
+  if (!s) return {};
+  return JSON.parse(s);
 };
 
 export const isCache = (x: unknown): x is Cache =>

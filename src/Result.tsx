@@ -156,10 +156,11 @@ export const Result = ({ query }: { query: string }): React.ReactElement => {
 
 const main = () => {
   const cache: Cache.Cache = Cache.loadCache("query-cache");
-  const _x: { [k: string]: undefined | "" | Processed } = Object.fromEntries(
-    Object.entries(cache)
-      // .slice(0, 1)
-      .map(([k, s]) => [k, s && processAndStore(k, fromHTML(s))]),
+  Object.fromEntries(
+    Object.entries(cache).map(([k, s]) => [
+      k,
+      s && processAndStore(k, fromHTML(s)),
+    ]),
   );
 };
 
