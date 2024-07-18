@@ -8,21 +8,20 @@ export const Main = (): React.ReactElement => {
   const [inp, setInp] = React.useState<string>(q);
   const [query, setQuery] = React.useState<string>(q);
   return (
-    <div>
+    <div className={query ? "" : "no-query"}>
       <form
-        className="search-bar margin"
+        className="search-bar"
         onSubmit={(e) => {
           e.preventDefault();
           setQuery(inp);
         }}
       >
-        <div className="margin row-reverse">
+        <div>
           <input value={inp} onChange={(e) => setInp(e.target.value)} />
           <button type="submit">Søg</button>
         </div>
       </form>
       {query && <Result.Result query={query} />}
-      {!query && <p>Please input query</p>}
     </div>
   );
 };
