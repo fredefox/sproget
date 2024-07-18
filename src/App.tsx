@@ -3,10 +3,13 @@ import * as Result from "./Result";
 import * as Router from "react-router-dom";
 
 export const Main = (): React.ReactElement => {
-  const q: string =
-    new URL(window.location.href).searchParams.get("SearchableText") || "";
-  const [inp, setInp] = React.useState<string>(q);
-  const [query, setQuery] = React.useState<string>(q);
+  const [searchParams, setSearchParams] = Router.useSearchParams();
+  const query = searchParams.get("query");
+  const [inp, setInp] = React.useState<string>(query || "");
+  const setQuery = (query: string) => {
+    setSearchParams({ ...(query && { query }) });
+  };
+
   return (
     <div className={query ? "" : "no-query"}>
       <form
@@ -26,8 +29,9 @@ export const Main = (): React.ReactElement => {
   );
 };
 
-export const App = (): React.ReactElement => (
-  <Router.BrowserRouter>
-    <Main />
-  </Router.BrowserRouter>
-);
+export const App = (): React.ReactElement => {
+  const router = Router.createBrowserRouter([
+    { path: "/:query?", element: <Main /> },
+  ]);
+  return <Router.RouterProvider router={router}></Router.RouterProvider>;
+};
