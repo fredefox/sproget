@@ -111,6 +111,15 @@ const doQuery = async (query: string): Promise<string> => {
   const template = fromHTML(body);
   processAndStore(query, template);
   const element = template.querySelector("#portal-columns");
+  element &&
+    [...element.querySelectorAll("a")].forEach((a) => {
+      const href = a.getAttribute("href");
+      if (!href || !href.match(/^lookup/)) return;
+      const m = href.match(/\?.*/);
+      if (!m) return;
+      const query = new URLSearchParams(m[0]).get("SearchableText");
+      a.setAttribute("href", `?query=${query}`);
+    });
   return element?.outerHTML || "";
 };
 
@@ -141,7 +150,6 @@ export const Result = ({ query }: { query: string }): React.ReactElement => {
       })(),
     [query],
   );
-  // console.log({ doc });
   if (html === null) return <></>;
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 };
