@@ -60,10 +60,12 @@ table, tbody, tr, td {
 .etym:before,
 .audio a:after {
   border: 1px solid var(--foreground-color);
-  font-size: 90%;
+  font-size: 77%;
   font-weight: bolder;
   font-variant: small-caps;
-  margin: 1ex;
+  margin-inline: 1ex;
+  padding-inline: 1ex;
+  display: inline-block;
 }
 
 .def .def {
