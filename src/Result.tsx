@@ -1,6 +1,7 @@
 import React from "react";
 import "./Result.css";
 import * as Cache from "./cache";
+import * as Process from "./process";
 
 export const fetchSample = () => fetch("http://localhost:3002");
 
@@ -11,105 +12,10 @@ export const fetchLookup = (query: string) =>
 
 const performQuery = (query: string) => fetchLookup(query);
 
-const $ = (e: ParentNode, s: string): string | undefined =>
-  e.querySelector(s)?.outerHTML;
-
-const $$ = (e: ParentNode, s: string): Element[] => [...e.querySelectorAll(s)];
-
-type S = string | undefined;
-
-type RO = S;
-
-type Def2 = { dtrn: S; onyms: S };
-
-type Def1 = { dtrn: S; onyms: S; defs: Def2[] };
-
-type Idiom = { idiom: S; def: S };
-
-type Def = {
-  etym: S;
-  defs: Def1[];
-  idiom: Idiom[];
-};
-
-type DDO = { head: S; pos: S; sourcelink: S; m: S; phon: S; def: Def };
-
-type Thesaurus = { word: S; ms: S[] };
-
-type ODS = S;
-
-type Processed = {
-  ro: RO[];
-  ddo: DDO[];
-  thesaurus: Thesaurus[];
-  ods: ODS[];
-};
-
-const process = (doc: ParentNode): Processed => {
-  const ro = $$(doc, ".ro .snippet_text").map((e) => e.outerHTML);
-  const ddo = $$(doc, ".ar").map(
-    (ar): DDO => ({
-      head: $(ar, ".head"),
-      pos: $(ar, ".pos"),
-      sourcelink: $(ar, ".sourcelink"),
-      m: $(ar, ".m"),
-      phon: $(ar, ".phon"),
-      // def: $(ar, ".def"),
-      def: {
-        etym: $(ar, ".etym"),
-        defs: $$(ar, ":scope > .def > .def").map(
-          (def): Def1 => ({
-            dtrn: $(def, ":scope > .dtrn"),
-            onyms: $(def, ":scope > .onyms"),
-            defs: $$(def, ":scope > .def").map(
-              (def): Def2 => ({
-                dtrn: $(def, ":scope > .dtrn"),
-                onyms: $(def, ":scope > .onyms"),
-              }),
-            ),
-          }),
-        ),
-        idiom: $$(ar, ":scope > .def > .idiom > .idiom").map((idiom) => ({
-          idiom: $(idiom, "a"),
-          def: $(idiom, ".def"),
-        })),
-      },
-    }),
-  );
-  const ods = $$(doc, ".articles").map((e) => e.outerHTML);
-  const thesaurus = $$(doc, "#thesaurus-content li").map((li) => ({
-    word: $(li, ".word"),
-    ms: $$(li, ".m").map((e) => e.outerHTML),
-  }));
-  const res: Processed = {
-    // Retskrivningsordbogen
-    ro,
-    // Den danske ordbog
-    ddo,
-    // Den danske synonymordbog
-    thesaurus,
-    // Ordbog over det danske sprog
-    ods,
-  };
-  return res;
-};
-
-const processAndStore = (k: string, node: ParentNode): Processed => {
-  // Unsafe "as any".
-  const x: Cache.Rec<string, Processed> = Cache.load(
-    "query-cached-processed",
-  ) as any;
-  const res = process(node);
-  x[k] = res;
-  Cache.store("query-cached-processed", x);
-  return res;
-};
-
-const doQuery = async (query: string): Promise<string> => {
+const doQuery = async (query: string): Promise<Process.Result> => {
   const response = await performQuery(query);
   const body = await response.text();
   const template = fromHTML(body);
-  processAndStore(query, template);
   const element = template.querySelector("#portal-columns");
   element &&
     [...element.querySelectorAll("a")].forEach((a) => {
@@ -120,19 +26,16 @@ const doQuery = async (query: string): Promise<string> => {
       const query = new URLSearchParams(m[0]).get("SearchableText");
       a.setAttribute("href", `?query=${query}`);
     });
-  return element?.outerHTML || "";
+  return Process.processAndStore(query, template);
 };
 
-const parse: Cache.Parse<string> = (s) => s;
-const encode: Cache.Encode<string> = (s) => s;
+const parse: Cache.Parse<Process.Result> = (s) => JSON.parse(s);
+const encode: Cache.Encode<Process.Result> = (res) => JSON.stringify(res);
 
-const serializer: Cache.Serialize<string> = [parse, encode];
+const serializer: Cache.Serialize<Process.Result> = [parse, encode];
 
-const doQueryCached: (x: string) => Promise<string> = Cache.cached(
-  serializer,
-  "query-cache",
-  doQuery,
-);
+const doQueryCached: (x: string) => Promise<Process.Result> =
+  Cache.cached<Process.Result>(serializer, "query-cache", doQuery);
 
 const fromHTML = (html: string): DocumentFragment => {
   const template = document.createElement("template");
@@ -140,28 +43,156 @@ const fromHTML = (html: string): DocumentFragment => {
   return template.content;
 };
 
+const Link = ({
+  value: { link, linktext },
+}: {
+  value: Process.Link;
+}): React.ReactElement => (
+  <a href={link} dangerouslySetInnerHTML={{ __html: linktext }}></a>
+);
+
+const Pos = ({ value }: { value: Process.Pos }): React.ReactElement => (
+  <>
+    {value.map((p, idx) => (
+      <div key={idx} dangerouslySetInnerHTML={{ __html: p }}></div>
+    ))}
+  </>
+);
+const Sourcelink = ({
+  value: { raw },
+}: {
+  value: Process.Sourcelink;
+}): React.ReactElement => <div dangerouslySetInnerHTML={{ __html: raw }}></div>;
+
+const Ending = ({ value }: { value: Process.Ending }): React.ReactElement => (
+  <li>{value}</li>
+);
+
+const Phon = ({ value }: { value: Process.Phon }): React.ReactElement => (
+  <div className="phon">{value}</div>
+);
+
+const Etym = ({ value }: { value: Process.Etym }): React.ReactElement => (
+  <>{value && <div dangerouslySetInnerHTML={{ __html: value }}></div>}</>
+);
+
+const Dtrn = ({ value }: { value: Process.Dtrn }): React.ReactElement => (
+  <div dangerouslySetInnerHTML={{ __html: value }}></div>
+);
+
+const Onym = ({ value }: { value: Process.Onym }): React.ReactElement => (
+  <Link value={value} />
+);
+
+const Def2 = ({
+  value: { dtrn, onyms },
+}: {
+  value: Process.Def2;
+}): React.ReactElement => (
+  <>
+    <div dangerouslySetInnerHTML={{ __html: dtrn }}></div>
+    <div dangerouslySetInnerHTML={{ __html: onyms }}></div>
+  </>
+);
+
+const Def1 = ({
+  value: { dtrn, onyms, defs },
+}: {
+  value: Process.Def1;
+}): React.ReactElement => (
+  <>
+    <Dtrn value={dtrn} />
+    {onyms.length > 0 && (
+      <ul>
+        {onyms.map((onym, idx) => (
+          <Onym key={idx} value={onym} />
+        ))}
+      </ul>
+    )}
+    {defs.length > 0 && (
+      <ul>
+        {defs.map((def2, idx) => (
+          <Def2 key={idx} value={def2} />
+        ))}
+      </ul>
+    )}
+  </>
+);
+
+const Idiom = (_: { value: Process.Idiom }): React.ReactElement => <></>;
+
+const Def = ({
+  value: { etym, defs, idiom },
+}: {
+  value: Process.Def;
+}): React.ReactElement => (
+  <div>
+    <Etym value={etym} />
+    <div>
+      {defs.map((def1, idx) => (
+        <Def1 key={idx} value={def1} />
+      ))}
+    </div>
+    <div>
+      {idiom.map((idiom, idx) => (
+        <Idiom key={idx} value={idiom} />
+      ))}
+    </div>
+  </div>
+);
+
+const DDO = ({
+  value: { head, pos, sourcelink, endings, phon, def },
+}: {
+  value: Process.DDO;
+}): React.ReactElement => (
+  <section>
+    <Link value={head} />
+    <Pos value={pos} />
+    <Sourcelink value={sourcelink} />
+    {endings.length > 0 && (
+      <ul>
+        {endings.map((ending, idx) => (
+          <Ending key={idx} value={ending} />
+        ))}
+      </ul>
+    )}
+    <Phon value={phon} />
+    <Def value={def} />
+  </section>
+);
+
 export const Result = ({ query }: { query: string }): React.ReactElement => {
-  const [html, setHtml] = React.useState<null | string>(null);
+  const [result, setResult] = React.useState<null | Process.Result>(null);
   React.useEffect(
     () =>
       void (async () => {
         const element = await doQueryCached(query);
-        setHtml(element);
+        setResult(element);
       })(),
     [query],
   );
-  if (html === null) return <></>;
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  if (result === null) return <></>;
+  return (
+    <>
+      {result.ddo.map((ddo, idx) => (
+        <DDO key={idx} value={ddo} />
+      ))}
+    </>
+  );
 };
 
 const main = () => {
   const cache: Cache.Cache = Cache.loadCache("query-cache");
-  Object.fromEntries(
-    Object.entries(cache).map(([k, s]) => [
-      k,
-      s && processAndStore(k, fromHTML(s)),
-    ]),
+  const xs: Record<string, Process.Result> = Object.fromEntries(
+    Object.entries<string | undefined>(cache).flatMap(([k, s]) => {
+      if (!s) return [];
+      return [[k, Process.processAndStore(k, fromHTML(s))]];
+    }),
   );
+  Cache.store("query-cached-processed", xs);
+  console.log(xs);
+  console.log(xs?.fisk?.ddo[0]);
 };
 
 main();

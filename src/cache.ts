@@ -2,7 +2,7 @@ export type Rec<K extends keyof any, T> = Record<K, T | undefined>;
 
 export type Cache = Rec<string, string>;
 
-export const store = (k: string, x: unknown) =>
+export const store = <T>(k: string, x: T) =>
   localStorage.setItem(k, JSON.stringify(x));
 
 export const load = (k: string): unknown => {
