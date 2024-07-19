@@ -53,38 +53,56 @@ const Link = ({
 
 const Pos = ({ value }: { value: Process.Pos }): React.ReactElement => (
   <>
-    {value.map((p, idx) => (
-      <div key={idx} dangerouslySetInnerHTML={{ __html: p }}></div>
-    ))}
+    {value.map((p, idx) => [
+      idx > 0 && ", ",
+      <span key={idx} dangerouslySetInnerHTML={{ __html: p }}></span>,
+    ])}
   </>
 );
-const Sourcelink = ({
+
+export const Sourcelink = ({
   value: { raw },
 }: {
   value: Process.Sourcelink;
-}): React.ReactElement => <div dangerouslySetInnerHTML={{ __html: raw }}></div>;
-
-const Ending = ({ value }: { value: Process.Ending }): React.ReactElement => (
-  <li>{value}</li>
+}): React.ReactElement => (
+  <span dangerouslySetInnerHTML={{ __html: raw }}></span>
 );
 
-const Phon = ({ value }: { value: Process.Phon }): React.ReactElement => (
-  <div className="phon">{value}</div>
+export const Ending = ({
+  value,
+}: {
+  value: Process.Ending;
+}): React.ReactElement => <li>{value}</li>;
+
+export const Phon = ({
+  value,
+}: {
+  value: Process.Phon;
+}): React.ReactElement => <p className="phon">{value}</p>;
+
+export const Etym = ({
+  value,
+}: {
+  value: Process.Etym;
+}): React.ReactElement => (
+  <>{value && <p dangerouslySetInnerHTML={{ __html: value }}></p>}</>
 );
 
-const Etym = ({ value }: { value: Process.Etym }): React.ReactElement => (
-  <>{value && <div dangerouslySetInnerHTML={{ __html: value }}></div>}</>
-);
-
-const Dtrn = ({ value }: { value: Process.Dtrn }): React.ReactElement => (
+export const Dtrn = ({
+  value,
+}: {
+  value: Process.Dtrn;
+}): React.ReactElement => (
   <div dangerouslySetInnerHTML={{ __html: value }}></div>
 );
 
-const Onym = ({ value }: { value: Process.Onym }): React.ReactElement => (
-  <Link value={value} />
-);
+export const Onym = ({
+  value,
+}: {
+  value: Process.Onym;
+}): React.ReactElement => <Link value={value} />;
 
-const Def2 = ({
+export const Def2 = ({
   value: { dtrn, onyms },
 }: {
   value: Process.Def2;
@@ -95,7 +113,7 @@ const Def2 = ({
   </>
 );
 
-const Def1 = ({
+export const Def1 = ({
   value: { dtrn, onyms, defs },
 }: {
   value: Process.Def1;
@@ -110,53 +128,68 @@ const Def1 = ({
       </ul>
     )}
     {defs.length > 0 && (
-      <ul>
+      <ol>
         {defs.map((def2, idx) => (
-          <Def2 key={idx} value={def2} />
+          <li>
+            <Def2 key={idx} value={def2} />
+          </li>
         ))}
-      </ul>
+      </ol>
     )}
   </>
 );
 
-const Idiom = (_: { value: Process.Idiom }): React.ReactElement => <></>;
+export const Idiom = (_: { value: Process.Idiom }): React.ReactElement => <></>;
 
-const Def = ({
+export const Def = ({
   value: { etym, defs, idiom },
 }: {
   value: Process.Def;
 }): React.ReactElement => (
-  <div>
+  <>
     <Etym value={etym} />
-    <div>
-      {defs.map((def1, idx) => (
-        <Def1 key={idx} value={def1} />
-      ))}
-    </div>
-    <div>
-      {idiom.map((idiom, idx) => (
-        <Idiom key={idx} value={idiom} />
-      ))}
-    </div>
-  </div>
+    <ol>
+      <div>
+        {defs.map((def1, idx) => (
+          <li>
+            <Def1 key={idx} value={def1} />
+          </li>
+        ))}
+      </div>
+      <div>
+        {idiom.map((idiom, idx) => (
+          <Idiom key={idx} value={idiom} />
+        ))}
+      </div>
+    </ol>
+  </>
 );
 
 const DDO = ({
-  value: { head, pos, sourcelink, endings, phon, def },
+  value: { head, pos, endings, phon, def },
 }: {
   value: Process.DDO;
 }): React.ReactElement => (
   <section>
-    <Link value={head} />
-    <Pos value={pos} />
-    <Sourcelink value={sourcelink} />
-    {endings.length > 0 && (
-      <ul>
-        {endings.map((ending, idx) => (
-          <Ending key={idx} value={ending} />
-        ))}
-      </ul>
-    )}
+    <p>
+      <Link value={head} />
+      ;&nbsp;
+      <span>
+        <Pos value={pos} />
+      </span>
+      ;&nbsp;
+      <span>
+        {endings.length > 0 && (
+          <ul className="endings">
+            {endings.map((ending, idx) => [
+              idx > 0 && ", ",
+              <Ending key={idx} value={ending} />,
+            ])}
+          </ul>
+        )}
+      </span>
+      ;
+    </p>
     <Phon value={phon} />
     <Def value={def} />
   </section>

@@ -105,3 +105,17 @@ p {
 .search-bar {
   width: 100%;
 }
+
+section {
+  margin-block: 1lh;
+}
+
+ul.endings {
+  display: inline-block;
+  margin-block: 0px;
+  padding-inline: 0px;
+}
+
+.endings li {
+  display: inline-block;
+}
