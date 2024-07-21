@@ -13,10 +13,9 @@ const Link = ({
 
 const Pos = ({ value }: { value: Process.Pos }): React.ReactElement => (
   <>
-    {value.map((p, idx) => [
-      idx > 0 && ", ",
-      <span key={idx} dangerouslySetInnerHTML={{ __html: p }}></span>,
-    ])}
+    {value.length > 0 && (
+      <span dangerouslySetInnerHTML={{ __html: value.join(", ") }}></span>
+    )}
   </>
 );
 
@@ -27,12 +26,6 @@ export const Sourcelink = ({
 }): React.ReactElement => (
   <span dangerouslySetInnerHTML={{ __html: raw }}></span>
 );
-
-export const Ending = ({
-  value,
-}: {
-  value: Process.Ending;
-}): React.ReactElement => <span>{value}</span>;
 
 export const Phon = ({
   value,
@@ -137,23 +130,17 @@ const DDO = ({
 }): React.ReactElement => (
   <section>
     <p>
-      <Link value={head} />
-      ;&nbsp;
-      <span>
-        <Pos value={pos} />
-      </span>
-      ;&nbsp;
-      <span>
-        {endings.length > 0 && (
-          <span className="endings">
-            {endings.map((ending, idx) => [
-              idx > 0 && ", ",
-              <Ending key={idx} value={ending} />,
-            ])}
-          </span>
-        )}
-      </span>
-      ;
+      <Link value={head} />;{" "}
+      {pos.length > 0 && (
+        <>
+          <Pos value={pos} />;{" "}
+        </>
+      )}
+      {endings.length > 0 && (
+        <>
+          <span>{endings.join(", ")}</span>;
+        </>
+      )}
     </p>
     <Phon value={phon} />
     <Def value={def} />
