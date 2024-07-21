@@ -40,7 +40,7 @@ export const SearchBar = ({
         }}
       >
         <div>
-          <Input.Input value={inp} setValue={setInp} />
+          <Input.Input autoFocus={true} value={inp} setValue={setInp} />
           <button type="submit">Søg</button>
         </div>
       </form>
