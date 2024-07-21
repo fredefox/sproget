@@ -89,26 +89,37 @@ export const useSearchParam = (
     (v: string) => setSearchParams({ ...(v && { [k]: v }) }),
   ];
 };
+
+export const SearchBar = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}): React.ReactElement => {
+  const [inp, setInp] = React.useState<string>(value);
+  return (
+    <form
+      className="search-bar"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onChange(inp);
+      }}
+    >
+      <div>
+        <Input value={inp} setValue={setInp} />
+        <button type="submit">Søg</button>
+      </div>
+    </form>
+  );
+};
+
 export const Main = (): React.ReactElement => {
   const [query, setQuery] = useSearchParam("query");
-  const [inp, setInp] = React.useState<string>(query || "");
-  // const [sample, setSample] = React.useState("");
-  // React.useEffect(() => setSample(pick(words)), []);
 
   return (
     <div className={query ? "" : "no-query"}>
-      <form
-        className="search-bar"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setQuery(inp);
-        }}
-      >
-        <div>
-          <Input value={inp} setValue={setInp} />
-          <button type="submit">Søg</button>
-        </div>
-      </form>
+      <SearchBar value={query || ""} onChange={setQuery} />
 
       {query && <Result.Result query={query} />}
     </div>
