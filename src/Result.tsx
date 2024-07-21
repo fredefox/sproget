@@ -2,6 +2,7 @@ import React from "react";
 import "./Result.css";
 import * as Process from "./process";
 import * as Query from "./query";
+import * as Page from "./page";
 
 const Link = ({
   value: { link, linktext },
@@ -147,7 +148,13 @@ const DDO = ({
   </section>
 );
 
-export const Result = ({ query }: { query: string }): React.ReactElement => {
+export const Result = ({
+  query,
+  page,
+}: {
+  query: string;
+  page: Page.Page;
+}): React.ReactElement => {
   const [result, setResult] = React.useState<null | Process.Result>(null);
   React.useEffect(
     () =>
@@ -158,6 +165,37 @@ export const Result = ({ query }: { query: string }): React.ReactElement => {
     [query],
   );
   if (result === null) return <></>;
+  if (page === "ods")
+    return (
+      <>
+        {result.ods.map((s) => (
+          <div dangerouslySetInnerHTML={{ __html: s || "" }} />
+        ))}
+      </>
+    );
+  if (page === "ro")
+    return (
+      <>
+        {result.ro.map((s) => (
+          <p dangerouslySetInnerHTML={{ __html: s || "" }} />
+        ))}
+      </>
+    );
+  if (page === "thesaurus")
+    return (
+      <ul>
+        {result.thesaurus.map(({ word, ms }, idx) => (
+          <li key={idx}>
+            <span dangerouslySetInnerHTML={{ __html: word || "" }} />
+            <ul>
+              {ms.map((m, idx) => (
+                <li key={idx} dangerouslySetInnerHTML={{ __html: m || "" }} />
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    );
   return (
     <>
       {result.ddo.map((ddo, idx) => (

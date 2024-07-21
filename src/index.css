@@ -15,7 +15,6 @@ body button {
 
 body input,
 body button {
-  appearance: none;
   border-color: var(--foreground-color);
   border-style: solid;
   border-width: 2px;
@@ -53,6 +52,8 @@ a:visited {
   --foreground-color: black;
   --background-color: white;
   --paragraph-margin: 1em;
+  --middleground-color: grey;
+  --danebrog-background: hsl(351 81% 85% / 1);
 }
 
 p {
@@ -68,12 +69,16 @@ p {
     --background-color: black;
     --danebrog: #E31836;
     --danebrog-orlog: #AC0234;
+    --danebrog-background: hsl(351 81% 15% / 1);
   }
 
 }
 
-.search-bar {
+.menu {
   background: linear-gradient(to right, var(--danebrog), var(--danebrog-orlog));
+}
+
+.search-bar {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -85,13 +90,17 @@ p {
   padding-block: 4lh;
 }
 
-.search-bar input,
-.search-bar button {
+.menu input,
+.menu button {
   border-color: var(--background-color);
 }
 
-:active, :focus-visible {
-  outline-color: var(--foreground);
+button:hover {
+  outline-color: var(--middleground-color);
+}
+
+button:active, input:focus-visible {
+  outline-color: var(--foreground-color);
 }
 
 #root {
@@ -108,4 +117,30 @@ p {
 
 section {
   margin-block: 1lh;
+}
+
+.nav {
+  display: grid;
+  /* grid-direction: column; */
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.nav > * {
+  padding: 1ex;
+  margin: 0px;
+}
+
+.nav button {
+  background-color: initial;
+  border-width: 0px;
+}
+
+.nav .active {
+  outline-width: 0px;
+}
+
+.nav :not(.active) {
+  background-color: var(--danebrog-background);
+  /* --danebrog: grey; */
+  /* --danebrog-orlog: grey; */
 }
