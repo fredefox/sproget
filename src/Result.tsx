@@ -72,7 +72,7 @@ export const Ending = ({
   value,
 }: {
   value: Process.Ending;
-}): React.ReactElement => <li>{value}</li>;
+}): React.ReactElement => <span>{value}</span>;
 
 export const Phon = ({
   value,
@@ -146,7 +146,7 @@ export const Def = ({
 }: {
   value: Process.Def;
 }): React.ReactElement => (
-  <>
+  <div>
     <Etym value={etym} />
     <ol>
       <div>
@@ -162,7 +162,7 @@ export const Def = ({
         ))}
       </div>
     </ol>
-  </>
+  </div>
 );
 
 const DDO = ({
@@ -180,12 +180,12 @@ const DDO = ({
       ;&nbsp;
       <span>
         {endings.length > 0 && (
-          <ul className="endings">
+          <span className="endings">
             {endings.map((ending, idx) => [
               idx > 0 && ", ",
               <Ending key={idx} value={ending} />,
             ])}
-          </ul>
+          </span>
         )}
       </span>
       ;
