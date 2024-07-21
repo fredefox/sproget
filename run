@@ -1,0 +1,4 @@
+# Start the application in a tmux session
+tmux new-session \
+  "lcp --port 3001 --proxyUrl https://sproget.dk --proxyPartial \"\"" \; \
+  split-window "yarn start" 
