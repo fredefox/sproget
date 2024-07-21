@@ -1,74 +1,7 @@
 import React from "react";
 import * as Result from "./Result";
 import * as Router from "react-router-dom";
-
-const words = [
-  "fisk",
-  "tømmermænd",
-  "taber",
-  "fs",
-  "kvindekær",
-  "bindegal",
-  "kagemand",
-  "huskekage",
-  "drivert",
-  "ballademager",
-  "fedterøv",
-  "uskyldig",
-  "blærerøv",
-  "dna-prøve",
-  "fiskefars",
-  "pigeglad",
-  "pige-glad",
-  "kvindefjendsk",
-  "dameglad",
-  "hapsemad",
-  "haps",
-  "litografi",
-  "minister",
-  "lappedykker",
-  "kneppe",
-  "sex",
-  "anlade",
-  "lede",
-  "asdasd",
-  "applikation",
-  "fisksdfsdf",
-  "spændeskive",
-  "lampefeber",
-  "fars",
-  "params",
-  "query",
-  "jiddish",
-  "yiddish",
-  "heidegger",
-  "hash",
-  "galar",
-  "hashish",
-  "cannabis",
-  "ganja",
-  "funky",
-  "bas",
-  "basstemme",
-  "sopran",
-  "sopranstemme",
-  "fistel",
-  "organ",
-  "bingo",
-  "banko",
-  "bankospil",
-  "bingospil",
-  "flaps",
-  "flapslaps",
-  "laps",
-  "flap",
-  "bar",
-];
-
-export const pick = <T,>(xs: Array<T>): T => {
-  const idx = Math.floor(Math.random() * words.length);
-  return xs[idx];
-};
+import * as Util from "./util";
 
 const Input = (
   props: React.DetailedHTMLProps<
@@ -78,16 +11,6 @@ const Input = (
 ): React.ReactElement => {
   const { value, setValue } = props;
   return <input value={value} onChange={(e) => setValue(e.target.value)} />;
-};
-
-export const useSearchParam = (
-  k: string,
-): [string | null, (value: string) => void] => {
-  const [searchParams, setSearchParams] = Router.useSearchParams();
-  return [
-    searchParams.get(k),
-    (v: string) => setSearchParams({ ...(v && { [k]: v }) }),
-  ];
 };
 
 export const SearchBar = ({
@@ -115,7 +38,7 @@ export const SearchBar = ({
 };
 
 export const Main = (): React.ReactElement => {
-  const [query, setQuery] = useSearchParam("query");
+  const [query, setQuery] = Util.useSearchParam("query");
 
   return (
     <div className={query ? "" : "no-query"}>
