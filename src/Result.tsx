@@ -90,8 +90,8 @@ export const Def1 = ({
     {defs.length > 0 && (
       <ol>
         {defs.map((def2, idx) => (
-          <li>
-            <Def2 key={idx} value={def2} />
+          <li key={idx}>
+            <Def2 value={def2} />
           </li>
         ))}
       </ol>
@@ -110,16 +110,21 @@ export const Def = ({
     <Etym value={etym} />
     <ol>
       <div>
-        {defs.map((def1, idx) => (
-          <li>
-            <Def1 key={idx} value={def1} />
-          </li>
-        ))}
+        {defs.length > 0 &&
+          defs.map((def1, idx) => (
+            <li key={idx}>
+              <Def1 value={def1} />
+            </li>
+          ))}
       </div>
       <div>
-        {idiom.map((idiom, idx) => (
-          <Idiom key={idx} value={idiom} />
-        ))}
+        {idiom.length > 0 &&
+          idiom.map(
+            (idiom, idx): React.ReactNode =>
+              Boolean(console.log({ idx })) || (
+                <Idiom key={idx} value={idiom} />
+              ),
+          )}
       </div>
     </ol>
   </div>
