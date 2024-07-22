@@ -1,5 +1,5 @@
-import * as Cache from "./cache";
-import * as Process from "./process";
+import * as Cache from "../cache";
+import * as Process from "../process";
 
 export const fetchSample = () => fetch("http://localhost:3002");
 

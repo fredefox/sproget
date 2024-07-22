@@ -1,7 +1,7 @@
 import React from "react";
 import "./Result.css";
 import * as Process from "./process";
-import * as Query from "./query";
+import * as API from "./api";
 import * as Page from "./page";
 
 const Link = ({
@@ -159,7 +159,7 @@ export const Result = ({
   React.useEffect(
     () =>
       void (async () => {
-        const element = await Query.doQueryCached(query);
+        const element = await API.Sproget.doQueryCached(query);
         setResult(element);
       })(),
     [query],
