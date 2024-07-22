@@ -1,9 +1,8 @@
 import * as Cache from "../cache";
 import * as Process from "../process";
+import * as Util from "../util";
 
-export const fetchSample = () => fetch("http://localhost:3002");
-
-export const fetchLookup = (query: string) =>
+export const fetchLookup = (query: string): Promise<Response> =>
   fetch(
     `http://localhost:3001/lookup?SearchableText=${encodeURIComponent(query)}`,
   );
@@ -13,7 +12,7 @@ const performQuery = (query: string) => fetchLookup(query);
 const doQuery = async (query: string): Promise<Process.Result> => {
   const response = await performQuery(query);
   const body = await response.text();
-  const template = fromHTML(body);
+  const template = Util.fromHTML(body);
   const element = template.querySelector("#portal-columns");
   element &&
     [...element.querySelectorAll("a")].forEach((a) => {
@@ -28,15 +27,10 @@ const doQuery = async (query: string): Promise<Process.Result> => {
 };
 
 const parse: Cache.Parse<Process.Result> = (s) => JSON.parse(s);
+
 const encode: Cache.Encode<Process.Result> = (res) => JSON.stringify(res);
 
 const serializer: Cache.Serialize<Process.Result> = [parse, encode];
 
 export const doQueryCached: (x: string) => Promise<Process.Result> =
   Cache.cached<Process.Result>(serializer, "query-cache", doQuery);
-
-export const fromHTML = (html: string): DocumentFragment => {
-  const template = document.createElement("template");
-  template.innerHTML = html;
-  return template.content;
-};

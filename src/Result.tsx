@@ -114,10 +114,7 @@ export const Def = ({
       <div>
         {idiom.length > 0 &&
           idiom.map(
-            (idiom, idx): React.ReactNode =>
-              Boolean(console.log({ idx })) || (
-                <Idiom key={idx} value={idiom} />
-              ),
+            (idiom, idx): React.ReactNode => <Idiom key={idx} value={idiom} />,
           )}
       </div>
     </ol>
